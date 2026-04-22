@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Portfólio Interativo</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #111;
+    color: white;
+}
+
+h1 {
+    text-align: center;
+    padding: 15px;
+    font-size: 20px;
+}
+
+/* seção */
+.section {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px 10px 0 10px;
+}
+
+.section-title {
+    font-size: 16px;
+    margin: 10px 0;
+    padding: 10px;
+    border-left: 3px solid #555;
+    opacity: 0.9;
+}
+
+/* grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 220px;
+    gap: 10px;
+}
+
+.slot {
+    background: #1c1c1c;
+    border: 1px solid #333;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+
+.slot img, .slot iframe {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    opacity: 0.5;
+    height: 100%;
+}
+</style>
+
+</head>
+<body>
+
+<h1>Portfólio Interativo</h1>
+
+<div id="container"></div>
+
+<script>
+
+// =========================
+// 📦 DADOS ORGANIZADOS
+// =========================
+
+const portfolioData = [
+    {
+        title: "Museu da Imaginação - 2024 / 2025",
+        items: [
+            "https://youtube.com/shorts/3HupAKoE_5Y",
+            "https://youtube.com/shorts/aRM0N5A_4w4",
+            "https://youtu.be/tr6v37QanOU",
+            "https://youtu.be/9g9TWuQu4J0",
+            "https://www.youtube.com/shorts/lImUqRLGEus",
+            "https://youtu.be/g7NNqU1RfiI",
+            "https://youtube.com/shorts/bYsvw8Zd6Ks",
+            "https://youtube.com/shorts/xk0lBn4F67A",
+            "https://vimeo.com/1185646408",
+            "https://vimeo.com/1185646753",
+            "https://vimeo.com/1185647065",
+            "https://vimeo.com/1185647561",
+            "https://vimeo.com/1185647781",
+            "https://vimeo.com/1185647921"
+        ]
+    },
+
+    {
+    title: "Anime Friends - 2024 / 2025",
+    items: [
+        "https://vimeo.com/1185649729?share=copy&fl=sv&fe=ci",
+        "https://vimeo.com/1185649876?share=copy&fl=sv&fe=ci",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+    ]
+}
+];
+
+const container = document.getElementById("container");
+
+// =========================
+// 🧠 RENDER SEÇÕES
+// =========================
+
+portfolioData.forEach(section => {
+
+    const sec = document.createElement("div");
+    sec.className = "section";
+
+    const title = document.createElement("div");
+    title.className = "section-title";
+    title.innerText = section.title;
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    section.items.forEach(url => {
+        grid.appendChild(createSlot(url));
+    });
+
+    sec.appendChild(title);
+    sec.appendChild(grid);
+
+    container.appendChild(sec);
+});
+
+// =========================
+// 🎬 SLOT FACTORY
+// =========================
+
+function createSlot(url) {
+    const slot = document.createElement("div");
+    slot.className = "slot";
+
+    if (!url) {
+        slot.innerHTML = `<div class="empty">Sem mídia</div>`;
+        return slot;
+    }
+
+    // YouTube
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+
+        const id = getYouTubeID(url);
+
+        const img = document.createElement("img");
+        img.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+
+        slot.appendChild(img);
+
+        slot.onclick = () => {
+            window.open(`https://www.youtube.com/watch?v=${id}`, "_blank");
+        };
+
+        return slot;
+    }
+
+    // Vimeo
+    if (url.includes("vimeo.com")) {
+
+        const id = getVimeoID(url);
+
+        const iframe = document.createElement("iframe");
+        iframe.src = `https://player.vimeo.com/video/${id}`;
+        iframe.frameBorder = 0;
+        iframe.allow = "autoplay; fullscreen; picture-in-picture";
+
+        slot.appendChild(iframe);
+
+        slot.onclick = () => {
+            window.open(url, "_blank");
+        };
+
+        return slot;
+    }
+
+    // Drive
+    if (url.includes("drive.google.com")) {
+
+        const id = getDriveID(url);
+
+        const iframe = document.createElement("iframe");
+        iframe.src = `https://drive.google.com/file/d/${id}/preview`;
+
+        slot.appendChild(iframe);
+
+        slot.onclick = () => {
+            window.open(url, "_blank");
+        };
+
+        return slot;
+    }
+
+    // imagem
+    if (url.match(/\.(jpg|png|jpeg|webp|gif)/i)) {
+
+        const img = document.createElement("img");
+        img.src = url;
+
+        slot.appendChild(img);
+
+        slot.onclick = () => window.open(url, "_blank");
+
+        return slot;
+    }
+
+    slot.innerHTML = `<div class="empty">Link inválido</div>`;
+    return slot;
+}
+
+// =========================
+// 🔧 HELPERS
+// =========================
+
+function getYouTubeID(url) {
+    const reg = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/;
+    const match = url.match(reg);
+    return match ? match[1] : "";
+}
+
+function getDriveID(url) {
+    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    return match ? match[1] : "";
+}
+
+function getVimeoID(url) {
+    const match = url.match(/vimeo\.com\/(\d+)/);
+    return match ? match[1] : "";
+}
+
+</script>
+
+</body>
+</html>
