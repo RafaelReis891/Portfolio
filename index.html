@@ -7,61 +7,146 @@
 <style>
 body {
     margin: 0;
-    font-family: Arial;
-    background: #111;
-    color: white;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background: radial-gradient(circle at top, #1b1b1b, #070707);
+    color: #fff;
+    overflow-x: hidden;
 }
 
+/* fundo animado sutil */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(0,150,255,0.08), transparent 40%),
+        radial-gradient(circle at 80% 60%, rgba(255,0,120,0.05), transparent 45%);
+    animation: floatBg 12s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes floatBg {
+    from { transform: scale(1); filter: blur(0px); }
+    to { transform: scale(1.08); filter: blur(6px); }
+}
+
+/* HEADER */
 h1 {
     text-align: center;
-    padding: 15px;
-    font-size: 20px;
+    padding: 40px 10px 10px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+    background: linear-gradient(90deg, #ffffff, #9aa0ff, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* seção */
+body::after {
+    content: "PORTFÓLIO • SHOWCASE DE PROJETOS";
+    display: block;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 3px;
+    opacity: 0.4;
+    margin-top: -5px;
+}
+
+/* SEÇÃO */
 .section {
     max-width: 1200px;
-    margin: auto;
-    padding: 20px 10px 0 10px;
+    margin: 50px auto;
+    padding: 25px 20px;
+
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+
+    backdrop-filter: blur(6px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+
+    animation: fadeUp 0.6s ease both;
 }
 
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* TÍTULO */
 .section-title {
     font-size: 16px;
-    margin: 10px 0;
-    padding: 10px;
-    border-left: 3px solid #555;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-left: 12px;
+    border-left: 3px solid #6c6c6c;
     opacity: 0.9;
 }
 
-/* grid */
+/* GRID */
 .grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: 220px;
-    gap: 10px;
+    grid-auto-rows: 260px;
+    gap: 14px;
 }
 
+/* CARD */
 .slot {
-    background: #1c1c1c;
-    border: 1px solid #333;
+    background: #141414;
+    border: 1px solid #252525;
+    border-radius: 12px;
     overflow: hidden;
     position: relative;
     cursor: pointer;
+
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
 }
 
-.slot img, .slot iframe {
+.slot:hover {
+    transform: scale(1.05);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.65);
+    border-color: #444;
+}
+
+/* mídia */
+.slot img,
+.slot iframe {
     width: 100%;
-    height: 100%;
+    height: 70%;
     object-fit: cover;
 }
 
+/* descrição */
+.desc {
+    height: 30%;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: #ddd;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.3));
+    display: flex;
+    align-items: center;
+}
+
+/* vazio */
 .empty {
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
-    opacity: 0.5;
+    opacity: 0.4;
     height: 100%;
+}
+
+/* overlay */
+.slot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.25), transparent);
+    pointer-events: none;
 }
 </style>
 
@@ -75,49 +160,117 @@ h1 {
 <script>
 
 // =========================
-// 📦 DADOS ORGANIZADOS
+// DADOS
 // =========================
 
 const portfolioData = [
     {
         title: "Museu da Imaginação - 2024 / 2025",
         items: [
-            "https://youtube.com/shorts/3HupAKoE_5Y",
-            "https://youtube.com/shorts/aRM0N5A_4w4",
-            "https://youtu.be/tr6v37QanOU",
-            "https://youtu.be/9g9TWuQu4J0",
-            "https://www.youtube.com/shorts/lImUqRLGEus",
-            "https://youtu.be/g7NNqU1RfiI",
-            "https://youtube.com/shorts/bYsvw8Zd6Ks",
-            "https://youtube.com/shorts/xk0lBn4F67A",
-            "https://vimeo.com/1185646408",
-            "https://vimeo.com/1185646753",
-            "https://vimeo.com/1185647065",
-            "https://vimeo.com/1185647561",
-            "https://vimeo.com/1185647781",
-            "https://vimeo.com/1185647921"
+            {
+                url: "https://youtube.com/shorts/3HupAKoE_5Y",
+                desc: "Museu Imaginação - Teste Cadeiras"
+            },
+            {
+                url: "https://youtube.com/shorts/aRM0N5A_4w4",
+                desc: "Jogo infantil Totem"
+            },
+            {
+                url: "https://youtu.be/tr6v37QanOU",
+                desc: "Sala de Lego - Ativações Infantis"
+            },
+            {
+                url: "https://youtu.be/9g9TWuQu4J0",
+                desc: "Testando Mecanismo Sala Cinema Interativo"
+            },
+            {
+                url: "https://www.youtube.com/shorts/lImUqRLGEus",
+                desc: "Jogo Água no Corpo - Totem"
+            },
+            {
+                url: "https://youtu.be/g7NNqU1RfiI",
+                desc: "Testes deAplicação - Sala Cinema Interativo"
+            },
+            {
+                url: "https://youtube.com/shorts/bYsvw8Zd6Ks",
+                desc: "Integração Cadeiras + Video - Sala Cinema interativo"
+            },
+            {
+                url: "https://youtube.com/shorts/xk0lBn4F67A",
+                desc: "Primeiros testes audio e video - Cinema Interativo"
+            },
+            {
+                url: "https://vimeo.com/1185646408",
+                desc: "Jogo 2 - Sala da Usina"
+            },
+            {
+                url: "https://vimeo.com/1185646753",
+                desc: "Jogo Bactérias - Dentro da Agua"
+            },
+            {
+                url: "https://vimeo.com/1185647065",
+                desc: "Água no Corpo Totem"
+            },
+            {
+                url: "https://vimeo.com/1185647561",
+                desc: "Configuração de hardware e software"
+            },
+            {
+                url: "https://vimeo.com/1185647781",
+                desc: "Configurando Telão Sala da Usina"
+            },
+            {
+                url: "https://vimeo.com/1185647921",
+                desc: "Sala da Usina - Cena em construção"
+            }
         ]
     },
 
     {
-    title: "Anime Friends - 2024 / 2025",
-    items: [
-        "https://vimeo.com/1185649729?share=copy&fl=sv&fe=ci",
-        "https://vimeo.com/1185649876?share=copy&fl=sv&fe=ci",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
-    ]
-}
+        title: "Anime Friends - 2024 / 2025",
+        items: [
+            {
+                url: "https://vimeo.com/1185649729",
+                desc: "Jogo Asteroid no Giroscopio - Anime Friends"
+            },
+            {
+                url: "https://vimeo.com/1185649876",
+                desc: "Testando o Giroscópio"
+            },
+            {
+                url: "https://vimeo.com/1185668799?share=copy&fl=sv&fe=ci",
+                desc: "Giroscópio - Participantes"
+            },
+            {
+                url: "https://vimeo.com/1185669655?share=copy&fl=sv&fe=ci",
+                desc: "Entrevista com @johnynsano  - Anime Friends"
+            }
+        ]
+    },
+    {
+        title: "Rock in Rio",
+        items: [
+            {
+            url: "https://vimeo.com/1185671736?share=copy&fl=sv&fe=ci",
+            desc: "Rock in Rio! - Journey"
+            }
+        ]
+    },
+    {
+        title: "APAS SHOW",
+        items: [
+            {
+            url: "https://vimeo.com/1185670350?share=copy&fl=sv&fe=ci",
+            desc: "Realidade Aumentada, Roleta Premiada, Receitas Moça - Nestlé"
+            }
+        ]
+    }
 ];
 
 const container = document.getElementById("container");
 
 // =========================
-// 🧠 RENDER SEÇÕES
+// RENDER
 // =========================
 
 portfolioData.forEach(section => {
@@ -132,8 +285,8 @@ portfolioData.forEach(section => {
     const grid = document.createElement("div");
     grid.className = "grid";
 
-    section.items.forEach(url => {
-        grid.appendChild(createSlot(url));
+    section.items.forEach(item => {
+        grid.appendChild(createSlot(item));
     });
 
     sec.appendChild(title);
@@ -143,10 +296,14 @@ portfolioData.forEach(section => {
 });
 
 // =========================
-// 🎬 SLOT FACTORY
+// SLOT
 // =========================
 
-function createSlot(url) {
+function createSlot(item) {
+
+    const url = item.url;
+    const desc = item.desc || "";
+
     const slot = document.createElement("div");
     slot.className = "slot";
 
@@ -155,88 +312,59 @@ function createSlot(url) {
         return slot;
     }
 
+    let media;
+
     // YouTube
     if (url.includes("youtube.com") || url.includes("youtu.be")) {
 
         const id = getYouTubeID(url);
 
-        const img = document.createElement("img");
-        img.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-
-        slot.appendChild(img);
+        media = document.createElement("img");
+        media.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
 
         slot.onclick = () => {
             window.open(`https://www.youtube.com/watch?v=${id}`, "_blank");
         };
-
-        return slot;
     }
 
     // Vimeo
-    if (url.includes("vimeo.com")) {
+    else if (url.includes("vimeo.com")) {
 
         const id = getVimeoID(url);
 
-        const iframe = document.createElement("iframe");
-        iframe.src = `https://player.vimeo.com/video/${id}`;
-        iframe.frameBorder = 0;
-        iframe.allow = "autoplay; fullscreen; picture-in-picture";
-
-        slot.appendChild(iframe);
-
-        slot.onclick = () => {
-            window.open(url, "_blank");
-        };
-
-        return slot;
-    }
-
-    // Drive
-    if (url.includes("drive.google.com")) {
-
-        const id = getDriveID(url);
-
-        const iframe = document.createElement("iframe");
-        iframe.src = `https://drive.google.com/file/d/${id}/preview`;
-
-        slot.appendChild(iframe);
-
-        slot.onclick = () => {
-            window.open(url, "_blank");
-        };
-
-        return slot;
-    }
-
-    // imagem
-    if (url.match(/\.(jpg|png|jpeg|webp|gif)/i)) {
-
-        const img = document.createElement("img");
-        img.src = url;
-
-        slot.appendChild(img);
+        media = document.createElement("iframe");
+        media.src = `https://player.vimeo.com/video/${id}`;
+        media.frameBorder = 0;
+        media.allow = "autoplay; fullscreen; picture-in-picture";
 
         slot.onclick = () => window.open(url, "_blank");
+    }
 
+    else {
+        slot.innerHTML = `<div class="empty">Link inválido</div>`;
         return slot;
     }
 
-    slot.innerHTML = `<div class="empty">Link inválido</div>`;
+    slot.appendChild(media);
+
+    // descrição
+    if (desc) {
+        const d = document.createElement("div");
+        d.className = "desc";
+        d.innerText = desc;
+        slot.appendChild(d);
+    }
+
     return slot;
 }
 
 // =========================
-// 🔧 HELPERS
+// HELPERS
 // =========================
 
 function getYouTubeID(url) {
     const reg = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/;
     const match = url.match(reg);
-    return match ? match[1] : "";
-}
-
-function getDriveID(url) {
-    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
     return match ? match[1] : "";
 }
 
